@@ -14,29 +14,19 @@ place.
 """
 
 # This file is copied from glumpy[https://github.com/glumpy/glumpy]
+# some functions add by me
 
 # Note: we use functions from math module because they're faster on scalars
 
 import math
 import numpy as np
 
-
-inversesqrt = lambda x: 1 / math.sqrt(x)
-
-# def inversesqrt(x):
-#     if isinstance(x, float) or isinstance(x, int):
-#         return 1 / math.sqrt(x)
-#     elif len(x) > 1:
-#         sqr = np.sqrt(x)
-#         return 1 / sqr
-
 def normalize(x):
     if isinstance(x, float):
         return -1 if x < 0 else 1
     elif len(x) > 1:
-        #sqr = np.square(x*x)
-        sqr = math.sqrt(np.sum())
-        return x * inversesqrt(sqr)
+        sqr = math.sqrt(np.sum(x*x))
+        return x / sqr
 
 def translate(M, x, y=None, z=None):
     """Translate by an offset (x, y, z) .
@@ -347,8 +337,7 @@ def lookAt(eye, center, up):
     """
     """
     f = normalize(center - eye)
-    u = normalize(up)
-    s = normalize(np.cross(f, u))
+    s = normalize(np.cross(f, up))
     u = np.cross(s, f)
 
     result = np.identity(4)
