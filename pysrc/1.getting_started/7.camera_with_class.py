@@ -133,7 +133,7 @@ class GLWindow(QGLWidget):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
-        texturePath = os.path.join(abPath, '..', 'resources', 'textures', 'container.jpg')
+        texturePath = os.path.join(abPath, '..', '..', 'resources', 'textures', 'container.jpg')
         im = Image.open(texturePath)
         #im = im.transpose(Image.FLIP_TOP_BOTTOM)
 
@@ -151,7 +151,7 @@ class GLWindow(QGLWidget):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
-        texture2Path = os.path.join(abPath, '..', 'resources', 'textures', 'awesomeface.png')
+        texture2Path = os.path.join(abPath, '..', '..', 'resources', 'textures', 'awesomeface.png')
         im2 = Image.open(texture2Path)
         #im2 = im2.transpose(Image.FLIP_TOP_BOTTOM)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, im2.size[0], im2.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, im2.tostring())
