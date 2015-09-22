@@ -2,14 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import math
-import collections
 
 import numpy as np
 import glm
 
 
-CameraMovement = collections.namedtuple('CameraMovement', ['FORWARD', 'BACKWARED', 'LEFT', 'RIGHT'])
-Camera_Movement = CameraMovement(0, 1, 2, 3)
+class Camera_Movement:
+    FORWARD = 0
+    BACKWARED = 1
+    LEFT = 2
+    RIGHT = 3
 
 # default camera values
 YAW = -90.0
@@ -21,8 +23,8 @@ ZOOM = 45.0
 
 class Camera(object):
 
-    def __init__(self, posx, posy, posz, upx, upy, upz, yaw, pitch):
-        self.front = np.array(0.0, 0.0, -1.0, np.float32)
+    def __init__(self, posx, posy, posz, upx=0.0, upy=1.0, upz=0.0, yaw=YAW, pitch=PITCH):
+        self.front = np.array([0.0, 0.0, -1.0], np.float32)
         self.movementSpeed = SPEED
         self.mouseSensitivity = SENSITIVTY
         self.zoom = ZOOM
@@ -39,6 +41,17 @@ class Camera(object):
     @property
     def viewMatrix(self):
         return glm.lookAt(self.position, self.position + self.front, self.up)
+
+    def processKeyboard(self, direction, deltaTime):
+        velocity = self.movementSpeed * deltaTime
+        if direction == Camera_Movement.FORWARD:
+            self.position += self.front * velocity
+        if direction == Camera_Movement.BACKWARED:
+            self.position -= self.front * velocity
+        if direction == Camera_Movement.LEFT:
+            self.position -= self.right * velocity
+        if direction == Camera_Movement.RIGHT:
+            self.position += self.right * velocity
 
     def processMouseMovement(self, xoffset, yoffset, constrainPitch=True):
         xoffset *= self.mouseSensitivity

@@ -15,6 +15,7 @@ from PIL import Image
 import numpy as np
 
 import glm
+import camera
 
 currentFile = inspect.getframeinfo(inspect.currentframe()).filename
 abPath = os.path.dirname(os.path.abspath(currentFile))
@@ -28,6 +29,20 @@ class GLWindow(QGLWidget):
             gformat.setVersion(3, 3)
             gformat.setProfile(QGLFormat.CoreProfile)
         super(GLWindow, self).__init__(gformat)
+
+        self.__timer = QElapsedTimer()
+        self.__timer.start()
+
+        self.camera = camera.Camera(0.0, 0.0, 3.0)
+        self.__lastX = 400
+        self.__lastY = 300
+        self.__firstMouse = True
+
+        self.__deltaTime = 0.0
+        self.__lastTime = 0.0
+
+        # if you want press mouse button to active camera rotation set it to false 
+        self.setMouseTracking(True)
 
     def loadShaders(self):
         vertexShaderFile = os.path.join(abPath, '6.coordinate_systems.vs')
@@ -163,6 +178,10 @@ class GLWindow(QGLWidget):
         glViewport(0, 0, w, h)
 
     def paintGL(self):
+        currentTime = self.__timer.elapsed() / 1000.0
+        self.__deltaTime = currentTime - self.__lastTime
+        self.__lastTime = currentTime
+
         # Render
         # Clear the colorbuffer
         glClearColor(0.2, 0.3, 0.3, 1.0)
@@ -177,10 +196,9 @@ class GLWindow(QGLWidget):
         glBindTexture(GL_TEXTURE_2D, self.texture2)
         glUniform1i(glGetUniformLocation(self.__shaderProgram, 'ourTexture2'), 1)
 
-        view = np.identity(4)
-        #projection = np.identity(4)
+        view = self.camera.viewMatrix
         view = glm.translate(view, 0.0, 0.0, -3.0)
-        projection = glm.perspective(45.0, float(self.width()) / self.height(), 0.1, 100.0)
+        projection = glm.perspective(self.camera.zoom, float(self.width()) / self.height(), 0.1, 1000.0)
         # get their uniform location
         modelLoc = glGetUniformLocation(self.__shaderProgram, 'model')
         viewLoc = glGetUniformLocation(self.__shaderProgram, 'view')
@@ -203,7 +221,39 @@ class GLWindow(QGLWidget):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             qApp.quit()
+        if event.key() == Qt.Key_W:
+            self.camera.processKeyboard(camera.Camera_Movement.FORWARD, self.__deltaTime)
+        if event.key() == Qt.Key_S:
+            self.camera.processKeyboard(camera.Camera_Movement.BACKWARED, self.__deltaTime)
+        if event.key() == Qt.Key_A:
+            self.camera.processKeyboard(camera.Camera_Movement.LEFT, self.__deltaTime)
+        if event.key() == Qt.Key_D:
+            self.camera.processKeyboard(camera.Camera_Movement.RIGHT, self.__deltaTime)
+
+        self.updateGL()
         return super(GLWindow, self).keyPressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        pos = event.pos()
+        if self.__firstMouse:
+            self.__lastX = pos.x()
+            self.__lastY = pos.y()
+            self.__firstMouse = False
+
+        xoffset = pos.x() - self.__lastX
+        yoffset = self.__lastY - pos.y()
+
+        self.__lastX = pos.x()
+        self.__lastY = pos.y()
+
+        self.camera.processMouseMovement(xoffset, yoffset)
+
+        self.updateGL()
+        return super(GLWindow, self).mouseMoveEvent(event)
+
+    def wheelEvent(self, event):
+        self.camera.processMouseScroll(event.delta())
+        self.updateGL()
 
 
 
