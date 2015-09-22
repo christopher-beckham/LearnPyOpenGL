@@ -1,4 +1,8 @@
 *.pyc
 *.pyo
 
+*.pyproj
+*.sln
+
 .idea/
+.vs/
