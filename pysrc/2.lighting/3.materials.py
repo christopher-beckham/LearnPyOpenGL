@@ -151,7 +151,7 @@ class GLWindow(QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         glUseProgram(self.__lightingShader)
-        lightPosLoc = glGetUniformLocation(self.__lightingShader, 'lightPos')
+        lightPosLoc = glGetUniformLocation(self.__lightingShader, 'light.position')
         viewPosLoc = glGetUniformLocation(self.__lightingShader, 'viewPos')
         glUniform3f(lightPosLoc, self.lightPos[0], self.lightPos[1], self.lightPos[2])
         glUniform3f(viewPosLoc, self.camera.position[0], self.camera.position[1], self.camera.position[2])
