@@ -3,6 +3,7 @@
 
 *.pyproj
 *.sln
+*.suo
 
 .idea/
 .vs/
