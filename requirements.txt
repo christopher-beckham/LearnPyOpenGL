@@ -1,4 +1,4 @@
-wheel==0.24.0
+wheel
 numpy
 pyopengl
 Pillow
