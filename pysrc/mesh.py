@@ -1,10 +1,43 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os.path
 import ctypes
 
 import numpy as np
+from PIL import Image
 from OpenGL.GL import *
+
+TextureType = {'texture_diffuse' : 1,
+               'texture_specular' : 2,
+               'texture_normal' : 5,
+               'texture_height' : 3}
+
+def textureFromFile(path, gamma=False):
+    textureID = glGenTextures(1)
+    im = Image.open(path)
+    glBindTexture(GL_TEXTURE_2D, textureID)
+    if path.lower().endswith('jpg'):
+        iformat = GL_SRGB
+        pformat = GL_RGB
+    elif path.lower().endswith('png'):
+        iformat = GL_SRGB_ALPHA
+        pformat = GL_RGBA
+    else:
+        iformat = GL_RGB
+        pformat = GL_RGB
+    glTexImage2D(GL_TEXTURE_2D, 0, iformat, im.size[0], im.size[1], 0, pformat, GL_UNSIGNED_BYTE, im.tostring())
+    glGenerateMipmap(GL_TEXTURE_2D)
+
+    # parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+
+    im.close()
+    glBindTexture(GL_TEXTURE_2D, 0)
+    return textureID
 
 class Texture(object):
     __slots__ = ['id', 'type', 'path']
@@ -17,9 +50,10 @@ class Texture(object):
 
 class Mesh(object):
 
-    def __init__(self, asset, textures):
+    def __init__(self, asset, assetDir):
         self.asset = asset
-        self.textures = textures
+        self.assetDir = assetDir
+        self.textures = []
         self.vao = None
 
         self.__setupMesh()
@@ -28,7 +62,7 @@ class Mesh(object):
         for texture in self.textures:
             index = self.textures.index(texture)
             name = texture.type
-            if texture.type in ('texture_diffuse', 'texture_specular', 'texture_normal', 'texture_height'):
+            if texture.type in TextureType:
                 name += str(index+1)
 
             glUniform1i(glGetUniformLocation(shader, name), index)
@@ -80,4 +114,15 @@ class Mesh(object):
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, self.asset.faces.nbytes, self.asset.faces, GL_STATIC_DRAW)
 
+    def __loadTextures(self):
+        for i in TextureType:
+            key = ('file', TextureType[i])
+            if not self.asset.material.properties.has_key(key):
+                continue
 
+            textureName = self.asset.material.properties[key]
+            texturePath = os.path.join(self.assetDir, textureName)
+            textureId = textureFromFile(texturePath)
+
+            texture = Texture(textureId, i, texturePath)
+            self.textures.append(texture)
