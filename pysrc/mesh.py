@@ -94,10 +94,10 @@ class Mesh(object):
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, self.asset.normals.itemsize, None)
 
         glBindBuffer(GL_ARRAY_BUFFER, tcbo)
-        glBufferData(GL_ARRAY_BUFFER, self.asset.textureCoords.nbytes, self.asset.textureCoords, GL_STATIC_DRAW)
+        glBufferData(GL_ARRAY_BUFFER, self.asset.texturecoords.nbytes, self.asset.texturecoords, GL_STATIC_DRAW)
 
         glEnableVertexAttribArray(2)
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, self.asset.textureCoords.itemsize, None)
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, self.asset.texturecoords.itemsize, None)
 
         glBindBuffer(GL_ARRAY_BUFFER, tbo)
         glBufferData(GL_ARRAY_BUFFER, self.asset.tangents.nbytes, self.asset.tangents, GL_STATIC_DRAW)

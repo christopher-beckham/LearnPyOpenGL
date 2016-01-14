@@ -33,8 +33,8 @@ class Model(object):
         self.directory = os.path.dirname(path)
 
         for mesh in scene.meshes:
-            self.meshes.append(Mesh(mesh))
-        
+            self.meshes.append(Mesh(mesh, self.directory))
+
         assimp.release(scene)
 
     #     self.__processNode(scene)
