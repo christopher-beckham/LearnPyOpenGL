@@ -18,15 +18,19 @@ def textureFromFile(path, gamma=False):
     im = Image.open(path)
     glBindTexture(GL_TEXTURE_2D, textureID)
     if path.lower().endswith('jpg'):
-        iformat = GL_SRGB
+        iformat = GL_RGB
+        if gamma:
+            iformat = GL_SRGB
         pformat = GL_RGB
     elif path.lower().endswith('png'):
-        iformat = GL_SRGB_ALPHA
+        iformat = GL_RGBA
+        if gamma:
+            iformat = GL_SRGB_ALPHA
         pformat = GL_RGBA
     else:
         iformat = GL_RGB
         pformat = GL_RGB
-    glTexImage2D(GL_TEXTURE_2D, 0, iformat, im.size[0], im.size[1], 0, pformat, GL_UNSIGNED_BYTE, im.tostring())
+    glTexImage2D(GL_TEXTURE_2D, 0, iformat, im.size[0], im.size[1], 0, pformat, GL_UNSIGNED_BYTE, im.tobytes())
     glGenerateMipmap(GL_TEXTURE_2D)
 
     # parameters
@@ -57,6 +61,7 @@ class Mesh(object):
         self.vao = None
 
         self.__setupMesh()
+        #self.__loadTextures()
 
     def draw(self, shader):
         for texture in self.textures:
@@ -69,7 +74,8 @@ class Mesh(object):
             glBindTexture(GL_TEXTURE_2D, texture.id)
 
         glBindVertexArray(self.vao)
-        glDrawElements(GL_TRIANGLES, len(self.asset.faces), GL_UNSIGNED_INT, None)
+        #glDrawElements(GL_TRIANGLES, len(self.asset.faces), GL_UNSIGNED_INT, None)
+        glDrawElements(GL_TRIANGLES, self.asset.faces.size, GL_UNSIGNED_INT, None)
         glBindVertexArray(0)
 
         for texture in self.textures:
@@ -85,31 +91,31 @@ class Mesh(object):
         glBufferData(GL_ARRAY_BUFFER, self.asset.vertices.nbytes, self.asset.vertices, GL_STATIC_DRAW)
 
         glEnableVertexAttribArray(0)
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, self.asset.vertices.itemsize, None)
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, None)
 
         glBindBuffer(GL_ARRAY_BUFFER, nbo)
         glBufferData(GL_ARRAY_BUFFER, self.asset.normals.nbytes, self.asset.normals, GL_STATIC_DRAW)
 
         glEnableVertexAttribArray(1)
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, self.asset.normals.itemsize, None)
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, None)
 
         glBindBuffer(GL_ARRAY_BUFFER, tcbo)
         glBufferData(GL_ARRAY_BUFFER, self.asset.texturecoords.nbytes, self.asset.texturecoords, GL_STATIC_DRAW)
 
         glEnableVertexAttribArray(2)
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, self.asset.texturecoords.itemsize, None)
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, None)
 
         glBindBuffer(GL_ARRAY_BUFFER, tbo)
         glBufferData(GL_ARRAY_BUFFER, self.asset.tangents.nbytes, self.asset.tangents, GL_STATIC_DRAW)
 
         glEnableVertexAttribArray(3)
-        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, self.asset.tangents.itemsize, None)
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, None)
 
         glBindBuffer(GL_ARRAY_BUFFER, bbo)
         glBufferData(GL_ARRAY_BUFFER, self.asset.bitangents.nbytes, self.asset.bitangents, GL_STATIC_DRAW)
 
-        glEnableVertexAttribArray(1)
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, self.asset.bitangents.itemsize, None)
+        glEnableVertexAttribArray(4)
+        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, None)
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, self.asset.faces.nbytes, self.asset.faces, GL_STATIC_DRAW)
