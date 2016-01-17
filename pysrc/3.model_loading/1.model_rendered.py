@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import math
-import ctypes
 import inspect
 
 from PySide.QtGui import *
@@ -68,9 +66,6 @@ class GLWindow(QGLWidget):
         self.__shaderProgram = shaders.compileProgram(vertexShader, fragmentShader)
 
         modelPath = os.path.join(abPath, '..', '..', 'resources', 'objects', 'nanosuit', 'nanosuit.obj')
-        #modelPath = os.path.join(abPath, '..', '..', 'resources', 'objects', 'rock', 'rock.obj')
-        #modelPath = r'F:\coding\test\cube.obj'
-        #modelPath = r'F:\coding\test\plane.obj'
         self.model = Model(modelPath)
 
         # Draw in wireframe
@@ -102,7 +97,7 @@ class GLWindow(QGLWidget):
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, projection)
 
         model = np.identity(4, np.float32)
-        #model = glm.scale(model, 0.2, 0.2, 0.2)
+        model = glm.scale(model, 0.2, 0.2, 0.2)
         model = glm.translate(model, 0.0, -1.75, 0.0)
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model)
 

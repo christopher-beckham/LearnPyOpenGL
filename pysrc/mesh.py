@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os.path
-import ctypes
 
 import numpy as np
 from PIL import Image
@@ -16,20 +15,15 @@ TextureType = {'texture_diffuse' : 1,
 def textureFromFile(path, gamma=False):
     textureID = glGenTextures(1)
     im = Image.open(path)
-    glBindTexture(GL_TEXTURE_2D, textureID)
-    if path.lower().endswith('jpg'):
-        iformat = GL_RGB
-        if gamma:
-            iformat = GL_SRGB
-        pformat = GL_RGB
-    elif path.lower().endswith('png'):
-        iformat = GL_RGBA
+    iformat = GL_RGB
+    pformat = GL_RGB
+    if im.mode == 'RGBA':
         if gamma:
             iformat = GL_SRGB_ALPHA
+        else:
+            iformat = GL_RGBA
         pformat = GL_RGBA
-    else:
-        iformat = GL_RGB
-        pformat = GL_RGB
+    glBindTexture(GL_TEXTURE_2D, textureID)
     glTexImage2D(GL_TEXTURE_2D, 0, iformat, im.size[0], im.size[1], 0, pformat, GL_UNSIGNED_BYTE, im.tobytes())
     glGenerateMipmap(GL_TEXTURE_2D)
 
@@ -61,20 +55,23 @@ class Mesh(object):
         self.vao = None
 
         self.__setupMesh()
-        #self.__loadTextures()
+        self.__loadTextures()
 
     def draw(self, shader):
+        textureNr = {}.fromkeys(TextureType.keys(), 1)
         for texture in self.textures:
             index = self.textures.index(texture)
+            # Active proper texture unit before binding
+            glActiveTexture(GL_TEXTURE0 + index)
             name = texture.type
             if texture.type in TextureType:
-                name += str(index+1)
+                name += str(textureNr[texture.type])
+                textureNr[texture.type] += 1
 
             glUniform1i(glGetUniformLocation(shader, name), index)
             glBindTexture(GL_TEXTURE_2D, texture.id)
 
         glBindVertexArray(self.vao)
-        #glDrawElements(GL_TRIANGLES, len(self.asset.faces), GL_UNSIGNED_INT, None)
         glDrawElements(GL_TRIANGLES, self.asset.faces.size, GL_UNSIGNED_INT, None)
         glBindVertexArray(0)
 
@@ -87,38 +84,46 @@ class Mesh(object):
         vbo, ebo, nbo, tcbo, tbo, bbo = glGenBuffers(6)
 
         glBindVertexArray(self.vao)
+        # vertex position
         glBindBuffer(GL_ARRAY_BUFFER, vbo)
         glBufferData(GL_ARRAY_BUFFER, self.asset.vertices.nbytes, self.asset.vertices, GL_STATIC_DRAW)
-
+        # set vertex attribute pointers
         glEnableVertexAttribArray(0)
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, None)
 
+        # vertex normal
         glBindBuffer(GL_ARRAY_BUFFER, nbo)
         glBufferData(GL_ARRAY_BUFFER, self.asset.normals.nbytes, self.asset.normals, GL_STATIC_DRAW)
-
+        # set normal attribute pointers
         glEnableVertexAttribArray(1)
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, None)
 
+        # vertex texture coords
+        texCoords = np.compress([True, True, False], self.asset.texturecoords[0], axis=1)
         glBindBuffer(GL_ARRAY_BUFFER, tcbo)
-        glBufferData(GL_ARRAY_BUFFER, self.asset.texturecoords.nbytes, self.asset.texturecoords, GL_STATIC_DRAW)
-
+        glBufferData(GL_ARRAY_BUFFER, texCoords.nbytes, texCoords, GL_STATIC_DRAW)
+        # set texture coords attribute pointers
         glEnableVertexAttribArray(2)
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, None)
 
+        # vertex tangent
         glBindBuffer(GL_ARRAY_BUFFER, tbo)
         glBufferData(GL_ARRAY_BUFFER, self.asset.tangents.nbytes, self.asset.tangents, GL_STATIC_DRAW)
-
+        # set tangent attribute pointers
         glEnableVertexAttribArray(3)
         glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, None)
 
+        # vertex bitangent
         glBindBuffer(GL_ARRAY_BUFFER, bbo)
         glBufferData(GL_ARRAY_BUFFER, self.asset.bitangents.nbytes, self.asset.bitangents, GL_STATIC_DRAW)
-
+        # set bitangent attribute pointers
         glEnableVertexAttribArray(4)
         glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, None)
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, self.asset.faces.nbytes, self.asset.faces, GL_STATIC_DRAW)
+
+        glBindVertexArray(0)
 
     def __loadTextures(self):
         for i in TextureType:
@@ -128,6 +133,7 @@ class Mesh(object):
 
             textureName = self.asset.material.properties[key]
             texturePath = os.path.join(self.assetDir, textureName)
+            if not os.path.exists(texturePath): continue
             textureId = textureFromFile(texturePath)
 
             texture = Texture(textureId, i, texturePath)
