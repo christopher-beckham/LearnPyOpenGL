@@ -164,7 +164,7 @@ class GLWindow(QGLWidget):
         #im = im.transpose(Image.FLIP_TOP_BOTTOM)
 
         glBindTexture(GL_TEXTURE_2D, self.diffuseMap)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, im.size[0], im.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, im.tostring())
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, im.size[0], im.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, im.tobytes())
         glGenerateMipmap(GL_TEXTURE_2D)
         im.close()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
@@ -178,7 +178,7 @@ class GLWindow(QGLWidget):
         #im = im.transpose(Image.FLIP_TOP_BOTTOM)
 
         glBindTexture(GL_TEXTURE_2D, self.specularMap)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, im.size[0], im.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, im.tostring())
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, im.size[0], im.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, im.tobytes())
         glGenerateMipmap(GL_TEXTURE_2D)
         im.close()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)

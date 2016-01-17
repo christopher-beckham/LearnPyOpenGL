@@ -137,7 +137,7 @@ class GLWindow(QGLWidget):
         im = Image.open(texturePath)
         #im = im.transpose(Image.FLIP_TOP_BOTTOM)
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, im.size[0], im.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, im.tostring())
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, im.size[0], im.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, im.tobytes())
         glGenerateMipmap(GL_TEXTURE_2D)
         im.close()
         glBindTexture(GL_TEXTURE_2D, 0)
@@ -154,7 +154,7 @@ class GLWindow(QGLWidget):
         texture2Path = os.path.join(abPath, '..', '..', 'resources', 'textures', 'awesomeface.png')
         im2 = Image.open(texture2Path)
         #im2 = im2.transpose(Image.FLIP_TOP_BOTTOM)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, im2.size[0], im2.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, im2.tostring())
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, im2.size[0], im2.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, im2.tobytes())
         glGenerateMipmap(GL_TEXTURE_2D)
         im2.close()
         glBindTexture(GL_TEXTURE_2D, 0)
