@@ -59,7 +59,9 @@ class GLWindow(QGLWidget):
         return vertexShader, fragmentShader
     
     def initializeGL(self):
+        # setup some OpenGL options
         glEnable(GL_DEPTH_TEST)
+        #glDepthFunc(GL_ALWAYS) # Set to always pass the depth test (same effect as glDisable(GL_DEPTH_TEST))
 
         vertexShader, fragmentShader = self.loadShaders()
         self.__shaderProgram = shaders.compileProgram(vertexShader, fragmentShader)
