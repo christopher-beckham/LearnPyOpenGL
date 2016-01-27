@@ -180,23 +180,24 @@ class GLWindow(QGLWidget):
         glClearColor(0.1, 0.1, 0.1, 1.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT)
 
-        glUseProgram(self.__shaderProgram)
+        glUseProgram(self.__singleColorProgram)
 
         view = self.camera.viewMatrix
         projection = glm.perspective(self.camera.zoom, float(self.width()) / self.height(), 0.1, 100.0)
         # get their uniform location
         modelLoc = glGetUniformLocation(self.__shaderProgram, 'model')
-        viewLoc = glGetUniformLocation(self.__shaderProgram, 'view')
-        projLoc = glGetUniformLocation(self.__shaderProgram, 'projection')
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view)
-        glUniformMatrix4fv(projLoc, 1, GL_FALSE, projection)
+        glUniformMatrix4fv(glGetUniformLocation(self.__singleColorProgram, 'view'), 1, GL_FALSE, view)
+        glUniformMatrix4fv(glGetUniformLocation(self.__singleColorProgram, 'projection'), 1, GL_FALSE, projection)
+        glUseProgram(self.__shaderProgram)
+        glUniformMatrix4fv(glGetUniformLocation(self.__shaderProgram, 'view'), 1, GL_FALSE, view)
+        glUniformMatrix4fv(glGetUniformLocation(self.__shaderProgram, 'projection'), 1, GL_FALSE, projection)
 
         # Draw floor as normal, we only care about the containers. The floor should NOT fill the stencil buffer so we set its mask to 0x00
         glStencilMask(0x00)
         # Floor
         glBindVertexArray(self.planeVAO)
         glBindTexture(GL_TEXTURE_2D, self.floorTexture)
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, np.identity(4))
+        glUniformMatrix4fv(glGetUniformLocation(self.__shaderProgram, 'model'), 1, GL_FALSE, np.identity(4))
         glDrawArrays(GL_TRIANGLES, 0, 6)
         glBindVertexArray(0)
 
@@ -207,10 +208,10 @@ class GLWindow(QGLWidget):
         glBindVertexArray(self.cubeVAO)
         glBindTexture(GL_TEXTURE_2D, self.cubeTexture)
         model = glm.translate(np.identity(4), -1, 0, -1)
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model)
+        glUniformMatrix4fv(glGetUniformLocation(self.__shaderProgram, 'model'), 1, GL_FALSE, model)
         glDrawArrays(GL_TRIANGLES, 0, 36)
         model = glm.translate(np.identity(4), 2, 0, 0)
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model)
+        glUniformMatrix4fv(glGetUniformLocation(self.__shaderProgram, 'model'), 1, GL_FALSE, model)
         glDrawArrays(GL_TRIANGLES, 0, 36)
         glBindVertexArray(0)
 
@@ -227,11 +228,11 @@ class GLWindow(QGLWidget):
         glBindTexture(GL_TEXTURE_2D, self.cubeTexture)
         model = glm.scale(np.identity(4), scale, scale, scale)
         model = glm.translate(model, -1, 0, -1)
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model)
+        glUniformMatrix4fv(glGetUniformLocation(self.__singleColorProgram, 'model'), 1, GL_FALSE, model)
         glDrawArrays(GL_TRIANGLES, 0, 36)
         model = glm.scale(np.identity(4), scale, scale, scale)
         model = glm.translate(model, 2, 0, 0)
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model)
+        glUniformMatrix4fv(glGetUniformLocation(self.__singleColorProgram, 'model'), 1, GL_FALSE, model)
         glDrawArrays(GL_TRIANGLES, 0, 36)
         glBindVertexArray(0)
         glStencilMask(0xFF)
