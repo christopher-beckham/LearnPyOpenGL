@@ -87,9 +87,7 @@ class GLWindow(QGLWidget):
     
     def initializeGL(self):
         # setup some OpenGL options
-        glEnable(GL_DEPTH_TEST)
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glDepthFunc(GL_LESS)
 
         vertexShader, fragmentShader = self.loadShaders('5.framebuffers.vs', '5.framebuffers.frag')
         self.__shaderProgram = shaders.compileProgram(vertexShader, fragmentShader)
