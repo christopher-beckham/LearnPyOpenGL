@@ -166,7 +166,6 @@ class GLWindow(QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         view = self.camera.viewMatrix
-        view = np.array(view, np.float32)
         glBindBuffer(GL_UNIFORM_BUFFER, self.uboMatrices)
         glBufferSubData(GL_UNIFORM_BUFFER, self.identityMat4.nbytes, self.identityMat4.nbytes, view)
         glBindBuffer(GL_UNIFORM_BUFFER, 0)
