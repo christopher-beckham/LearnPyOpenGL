@@ -139,7 +139,7 @@ class GLWindow(QGLWidget):
         glBindTexture(GL_TEXTURE_2D, self.texture2)
         glUniform1i(glGetUniformLocation(self.__shaderProgram, 'ourTexture2'), 1)
 
-        transform = np.identity(4)
+        transform = np.identity(4, np.float32)
         transform = glm.rotate(transform, self.__timer.elapsed() / 1000.0 * 50.0, 
                                0.0, 0.0, 1.0)
         transform = glm.translate(transform, 0.5, -0.5, 0.0)

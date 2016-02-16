@@ -197,7 +197,7 @@ class GLWindow(QGLWidget):
         # Floor
         glBindVertexArray(self.planeVAO)
         glBindTexture(GL_TEXTURE_2D, self.floorTexture)
-        glUniformMatrix4fv(glGetUniformLocation(self.__shaderProgram, 'model'), 1, GL_FALSE, np.identity(4))
+        glUniformMatrix4fv(glGetUniformLocation(self.__shaderProgram, 'model'), 1, GL_FALSE, np.identity(4, np.float32))
         glDrawArrays(GL_TRIANGLES, 0, 6)
         glBindVertexArray(0)
 
@@ -207,10 +207,10 @@ class GLWindow(QGLWidget):
         # Cubes
         glBindVertexArray(self.cubeVAO)
         glBindTexture(GL_TEXTURE_2D, self.cubeTexture)
-        model = glm.translate(np.identity(4), -1, 0, -1)
+        model = glm.translate(np.identity(4, np.float32), -1, 0, -1)
         glUniformMatrix4fv(glGetUniformLocation(self.__shaderProgram, 'model'), 1, GL_FALSE, model)
         glDrawArrays(GL_TRIANGLES, 0, 36)
-        model = glm.translate(np.identity(4), 2, 0, 0)
+        model = glm.translate(np.identity(4, np.float32), 2, 0, 0)
         glUniformMatrix4fv(glGetUniformLocation(self.__shaderProgram, 'model'), 1, GL_FALSE, model)
         glDrawArrays(GL_TRIANGLES, 0, 36)
         glBindVertexArray(0)
@@ -226,11 +226,11 @@ class GLWindow(QGLWidget):
         # Cubes
         glBindVertexArray(self.cubeVAO)
         glBindTexture(GL_TEXTURE_2D, self.cubeTexture)
-        model = glm.scale(np.identity(4), scale, scale, scale)
+        model = glm.scale(np.identity(4, np.float32), scale, scale, scale)
         model = glm.translate(model, -1, 0, -1)
         glUniformMatrix4fv(glGetUniformLocation(self.__singleColorProgram, 'model'), 1, GL_FALSE, model)
         glDrawArrays(GL_TRIANGLES, 0, 36)
-        model = glm.scale(np.identity(4), scale, scale, scale)
+        model = glm.scale(np.identity(4, np.float32), scale, scale, scale)
         model = glm.translate(model, 2, 0, 0)
         glUniformMatrix4fv(glGetUniformLocation(self.__singleColorProgram, 'model'), 1, GL_FALSE, model)
         glDrawArrays(GL_TRIANGLES, 0, 36)

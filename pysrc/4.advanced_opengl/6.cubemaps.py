@@ -228,7 +228,7 @@ class GLWindow(QGLWidget):
         projLoc = glGetUniformLocation(self.__shaderProgram, 'projection')
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view)
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, projection)
-        model = np.identity(4)
+        model = np.identity(4, np.float32)
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model)
 
 

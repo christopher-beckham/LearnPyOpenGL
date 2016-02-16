@@ -213,24 +213,24 @@ class GLWindow(QGLWidget):
         # Cubes
         glBindVertexArray(self.cubeVAO)
         glBindTexture(GL_TEXTURE_2D, self.cubeTexture)
-        model = glm.translate(np.identity(4), -1, 0, -1)
+        model = glm.translate(np.identity(4, np.float32), -1, 0, -1)
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model)
         glDrawArrays(GL_TRIANGLES, 0, 36)
-        model = glm.translate(np.identity(4), 2, 0, 0)
+        model = glm.translate(np.identity(4, np.float32), 2, 0, 0)
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model)
         glDrawArrays(GL_TRIANGLES, 0, 36)
 
         # Floor
         glBindVertexArray(self.planeVAO)
         glBindTexture(GL_TEXTURE_2D, self.floorTexture)
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, np.identity(4))
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, np.identity(4, np.float32))
         glDrawArrays(GL_TRIANGLES, 0, 6)
 
         # Vergetation
         glBindVertexArray(self.transparentVAO)
         glBindTexture(GL_TEXTURE_2D, self.transparentTexture)
         for i in self.vegetation:
-            model = glm.translate(np.identity(4), i[0], i[1], i[2])
+            model = glm.translate(np.identity(4, np.float32), i[0], i[1], i[2])
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model)
             glDrawArrays(GL_TRIANGLES, 0, 6)
 

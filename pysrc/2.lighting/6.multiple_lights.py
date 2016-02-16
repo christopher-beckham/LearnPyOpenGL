@@ -263,7 +263,7 @@ class GLWindow(QGLWidget):
         for i in self.__cubePositions:
             # calculate the model matrix for each object and pass it to shader before drawing
             angle = math.degrees(20.0 * self.__cubePositions.index(i))
-            model = glm.rotate(np.identity(4), angle, 1.0, 0.3, 0.5)
+            model = glm.rotate(np.identity(4, np.float32), angle, 1.0, 0.3, 0.5)
             model = glm.translate(model, i[0], i[1], i[2])
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model)
 
@@ -282,7 +282,7 @@ class GLWindow(QGLWidget):
 
         glBindVertexArray(self.__lightVAO)
         for i in self.__pointLightPositions:
-            model = glm.scale(np.identity(4), 0.2, 0.2, 0.2)
+            model = glm.scale(np.identity(4, np.float32), 0.2, 0.2, 0.2)
             model = glm.translate(model, i[0], i[1], i[2])
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model)
 

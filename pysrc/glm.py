@@ -340,7 +340,7 @@ def lookAt(eye, center, up):
     s = normalize(np.cross(f, up))
     u = np.cross(s, f)
 
-    result = np.identity(4)
+    result = np.identity(4, np.float32)
     result[:,0][:3] = s
     result[:,1][:3] = u
     result[:,2][:3] = -f
