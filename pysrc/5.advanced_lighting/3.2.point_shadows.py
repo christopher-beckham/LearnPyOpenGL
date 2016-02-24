@@ -87,7 +87,7 @@ class GLWindow(QGLWidget):
         [glDeleteShader(s) for s in _shaders if s]
 
         vertexShader, fragmentShader, geometryShader = self.loadShaders('3.2.point_shadows_depth.vs', '3.2.point_shadows_depth.frag', '3.2.point_shadows_depth.gs')
-        self.__simpleDepthShader = shaders.compileProgram(vertexShader, fragmentShader)
+        self.__simpleDepthShader = shaders.compileProgram(vertexShader, fragmentShader, geometryShader)
 
         # light source
         self.lightPos = np.array([0.0, 0.0, 0.0], np.float32)
