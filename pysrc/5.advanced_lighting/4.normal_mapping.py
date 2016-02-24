@@ -89,7 +89,7 @@ class GLWindow(QGLWidget):
 
         # load texture
         self.diffuseMap = loadTexture(os.path.join(abPath, '..', '..', 'resources', 'textures', 'brickwall.jpg'))
-        self.normalMap = loadTexture(os.path.join(abPath, '..', '..', 'resources', 'textures', 'brickwall.jpg'))
+        self.normalMap = loadTexture(os.path.join(abPath, '..', '..', 'resources', 'textures', 'brickwall_normal.jpg'))
 
     def resizeGL(self, w, h):
         glViewport(0, 0, w, h)
@@ -122,10 +122,10 @@ class GLWindow(QGLWidget):
         self.renderQuad()
 
         # render light source (simply re-renders a smaller plane at the light's position for debugging/visualization)
-        model = glm.scale(np.identity(4, np.float32), 0.1, 0.1, 0.1)
-        model = glm.translate(model, self.lightPos[0], self.lightPos[1], self.lightPos[2])
-        glUniformMatrix4fv(glGetUniformLocation(self.__shader, 'model'), 1, GL_FALSE, model)
-        self.renderQuad()
+        # model = glm.scale(np.identity(4, np.float32), 0.1, 0.1, 0.1)
+        # model = glm.translate(model, self.lightPos[0], self.lightPos[1], self.lightPos[2])
+        # glUniformMatrix4fv(glGetUniformLocation(self.__shader, 'model'), 1, GL_FALSE, model)
+        # self.renderQuad()
 
         glUseProgram(0)
 
