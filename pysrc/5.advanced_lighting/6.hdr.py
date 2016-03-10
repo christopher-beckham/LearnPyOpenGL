@@ -92,7 +92,7 @@ class GLWindow(QGLWidget):
         # Create floating point color buffer
         self.colorBuffer = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self.colorBuffer)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, self.width(), self.height(), 0, GL_RGB, GL_FLOAT, None)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, self.width(), self.height(), 0, GL_RGBA, GL_FLOAT, None)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         # create depth buffer (renderbuffer)

@@ -140,7 +140,7 @@ class GLWindow(QGLWidget):
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, self.gNormal, 0)
         # color + specular buffer
         glBindTexture(GL_TEXTURE_2D, self.gAlbedoSpec)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, self.width(), self.height(), 0, GL_RGB, GL_FLOAT, None)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width(), self.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, None)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, self.gAlbedoSpec, 0)
