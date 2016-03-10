@@ -121,19 +121,21 @@ class GLWindow(QGLWidget):
         self.gPositionDepth, self.gNormal, self.gAlbedo = glGenTextures(3)
         # position color buffer
         glBindTexture(GL_TEXTURE_2D, self.gPositionDepth)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, self.width(), self.height(), 0, GL_RGB, GL_FLOAT, None)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, self.width(), self.height(), 0, GL_RGBA, GL_FLOAT, None)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, self.gPositionDepth, 0)
         # normal color buffer
         glBindTexture(GL_TEXTURE_2D, self.gNormal)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, self.width(), self.height(), 0, GL_RGB, GL_FLOAT, None)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.width(), self.height(), 0, GL_RGB, GL_FLOAT, None)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, self.gNormal, 0)
         # color + specular buffer
         glBindTexture(GL_TEXTURE_2D, self.gAlbedo)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, self.width(), self.height(), 0, GL_RGB, GL_FLOAT, None)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.width(), self.height(), 0, GL_RGB, GL_FLOAT, None)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, self.gAlbedo, 0)
@@ -199,7 +201,7 @@ class GLWindow(QGLWidget):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
 
-        glClearColor(0.1, 0.1, 0.1, 1.0)
+        glClearColor(0.0, 0.0, 0.0, 1.0)
 
     def resizeGL(self, w, h):
         glViewport(0, 0, w, h)
@@ -212,7 +214,7 @@ class GLWindow(QGLWidget):
         # 1. Geometry Pass: render scene's geometry/color data into gbuffer
         glBindFramebuffer(GL_FRAMEBUFFER, self.gbuffer)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        projection = glm.perspective(self.camera.zoom, float(self.width()) / self.height(), 0.1, 100.0)
+        projection = glm.perspective(self.camera.zoom, float(self.width()) / self.height(), 0.1, 50.0)
         view = self.camera.viewMatrix
         glUseProgram(self.__geometyPassShader)
         glUniformMatrix4fv(glGetUniformLocation(self.__geometyPassShader, 'projection'), 1, GL_FALSE, projection)
