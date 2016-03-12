@@ -270,14 +270,14 @@ class GLWindow(QGLWidget):
         glBindTexture(GL_TEXTURE_2D, self.ssaoColorBufferBlur)
         # also send light relevent uniforms
         lightPosView = (self.camera.viewMatrix * np.array([self.lightPos[0], self.lightPos[1], self.lightPos[2], 1.0], np.float32))[3, :4]
-        glUniform3fv(glGetUniformLocation(self.__lightingPassShader, 'lightsPosition'), 1, lightPosView)
-        glUniform3fv(glGetUniformLocation(self.__lightingPassShader, 'lightsColor'), 1, self.lightColor)
+        glUniform3fv(glGetUniformLocation(self.__lightingPassShader, 'light.Position'), 1, lightPosView)
+        glUniform3fv(glGetUniformLocation(self.__lightingPassShader, 'light.Color'), 1, self.lightColor)
         # Update attenuation parameters and calculate radius
         _constant = 1.0 # Note that we don't send this to the shader, we assume it is always 1.0 (in our case)
         linear = 0.09
         quadratic = 0.032
-        glUniform1f(glGetUniformLocation(self.__lightingPassShader, 'lights.Linear'), linear)
-        glUniform1f(glGetUniformLocation(self.__lightingPassShader, 'lights.Quadratic'), quadratic)
+        glUniform1f(glGetUniformLocation(self.__lightingPassShader, 'light.Linear'), linear)
+        glUniform1f(glGetUniformLocation(self.__lightingPassShader, 'light.Quadratic'), quadratic)
         glUniform1i(glGetUniformLocation(self.__lightingPassShader, 'draw_mode'), self.draw_mode)
         self.renderQuad()
 
